@@ -1,0 +1,50 @@
+---
+global:
+  log:
+    - address: 127.0.0.1
+      facility: local0
+    - address: 127.0.0.1
+      facility: local1
+      level: notice
+  maxconn: 4096
+  user: haproxy
+  group: haproxy
+  daemon: yes
+defaults:
+  option:
+    - httplog
+    - dontlognull
+    - forwardfor
+    - http-server-close
+  stats:
+    auth: 
+      user: User
+      password: e0ba9c60-bd2c-49b3-95c5-90c07e763211
+    uri: /haproxyStats
+backends:
+  machineand.me:
+    balance: leastconn
+    option:
+      - httpclose
+      - forwardfor
+    cluster:
+      - host: 10.114.0.1
+        port: 80
+  influx.machineand.me:
+    balance: leastconn
+    option:
+      - httpclose
+      - forwardfor
+    cluster:
+      - host: 10.114.0.3
+        port: 8086
+      - host: 10.114.0.4
+        port: 8086
+  stats.machineand.me:
+    balance: leastconn
+    option:
+      - httpclose
+      - forwardfor
+    cluster:
+      - host: 10.114.0.2
+        port: 80
